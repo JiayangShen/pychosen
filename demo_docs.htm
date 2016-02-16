@@ -1,0 +1,219 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    
+    <link rel="stylesheet" href="css/chosen.min.css">
+    <style>
+        * { box-sizing: border-box }
+        body { padding-bottom: 300px; }
+        select { width: 200px; }
+        
+    </style>
+    
+    
+</head>
+<body>
+   
+    <h3>最基本使用</h3>
+    <select name="" id="select1">
+        <option value="1011">海淀区</option>
+        <option value="1012">西城区</option>
+        <option value="1013">朝阳区</option>
+    </select>
+    
+    <h3>带占位符</h3>
+    <!-- data-placeholder 为占位符，也可以在 js 中设置 options.placeholder_text 指定占位符 -->
+    <select name="" id="select2" data-placeholder="请选择或输入区域">
+        <!-- 要显示占位符，需要第第一个为空的 <option> -->
+        <option></option>
+        <option value="1011">海淀区</option>
+        <option value="1012">西城区</option>
+        <option value="1013">朝阳区</option>
+    </select>
+    
+    <h3>分组</h3>
+    <select name="" id="select3" data-placeholder="请选择或输入区域">
+        <option></option>
+        <optgroup label="北京">
+            <option value="1011">海淀区</option>
+            <option value="1012">西城区</option>
+            <option value="1013">朝阳区</option>
+        </optgroup>
+        <optgroup label="上海">
+            <option value="1021">徐汇区</option>
+            <option value="1022">闵行区</option>
+            <option value="1023">闸北区</option>
+        </optgroup>
+    </select>
+    
+    <h3>根据数据生成 &lt;select&gt; 内容</h3>
+    <select name="" id="select4" data-placeholder="请选择或输入区域"></select>
+    
+    <h3>根据数据生成带分组的 &lt;select&gt; 内容</h3>
+    <select name="" id="select5" data-placeholder="请选择或输入区域"></select>
+    
+    <h3>拼音匹配，根据数据自动生成</h3>
+    <select name="" id="select6" data-placeholder="请选择或输入区域"></select>
+    
+    <h3>拼音匹配，根据数据自动生成，带分组</h3>
+    <select name="" id="select7" data-placeholder="请选择或输入区域"></select>
+    
+    <!-- 此控件只依赖于 jQuery -->
+    <script src="js/jquery.js"></script>
+    <script src="js/chosen.js"></script>
+    
+    
+    <script>
+        
+        /** ---------使用说明-------------
+            
+            1.概述
+            
+            使用前，先引入 chosen.css 样式文件，chosen.css 依赖于示例代码 img 目录下的图标文件，
+            请根据自己的实际项目结构改变 css 中引用图片的路径。
+            
+            此控件依赖于 jQuery，在页面中引入 jQuery 文件后，再引入 chosen.jquery.js 文件。
+            
+            此控件需结合原生的 <select> 元素。可自动根据 <select> 是否为空决定是否生成select内容
+            
+            2.基本用法：
+            
+            var $mySelect = $('#mySelect');
+            var options;
+            $mySelect.chosen(optons); // optons 参数可不传，optons 说明如下：
+            
+            options = {
+                data: [ // 用于生成 select 内容和拼音匹配的数据，数组类型，可选
+                    { // 每条数据的属性名称和值没有强制限定，控件使用的字段名称可在其他配置项指定
+                        val: 1,
+                        txt: '第一项',
+                        py: 'di;yi;xiang;dyx;' //可选字段，若需要拼音匹配，建议每个数据项都用这个字段
+                               // 可免去手动配置。拼音字段的值是每个<option>显示的文字拼音的构成
+                               // 比如，“第一项” 对应的 py 值为 “di;yi;xiang;dyx;”。拼音构成为
+                               // 每个字的拼音，用英文分号;分割，最后一项为所有文字的第一个字母组合。
+                               // 实际使用需要后端服务返回此字段，商户中心有代码可参考。
+                    }
+                ],
+                showDefault: true, // 可选，默认 true，当使用自动数据生成 <select> 内容时，是否显示占位符。
+                valField: 'val', //字符串，可选， 指定 data 中的项用于 <option> 的 value 属性的字段名称
+                txtField: 'txt', //字符串，可选，指定 data 中的项用于 <option> 的 text 属性的字段名称
+                pyField: 'py',   //字符串，可选，默认 “py”，指定 data 中的项用于拼音匹配的字段名称
+                placeholder_text: "请选择或输入内容", // 占位符文字
+                no_results_text : "没有相关结果！",   // 当没有匹配结果时显示的文字
+                disable_search_threshold: 10         // 当可选项少于某个值时，禁用输入搜索
+            };
+            
+            2.销毁控件
+            options 也可以为字符串 'destroy', 用于销毁控件。比如：
+            $mySelect.chosen('destroy');
+            
+            3.更新控件
+            若 <select> 的内容有更新，可通过如下代码更新 chosen：
+            $mySelect.trigger("chosen:updated");
+            
+            4.事件绑定，获取状态和值
+            可以通过 <select> 的 JS APIs 来获取控件的各种状态和值，以及进行事件绑定。
+            也可以通过 jQuery 来操作，比如通过 jQuery 获取当前选择项的值：
+            $mySelect.val();
+            
+            6.更多请参考如下代码示例和文档：http://harvesthq.github.io/chosen/
+            
+        */
+        
+        /** --------- 代码示例 -------------*/
+        
+        //数据
+        var recordsA = [
+                {areaName: '海淀区', areaID: '1011'},
+                {areaName: '西城区', areaID: '1012'},
+                {areaName: '朝阳区', areaID: '1013'}
+            ];
+        var recordsB = [
+                {areaName: '徐汇区', areaID: '1021'},
+                {areaName: '闵行区', areaID: '1022'},
+                {areaName: '闸北区', areaID: '1023'}
+            ];
+        var recordsC = [
+                {areaName: '海淀区', areaID: '1011', py: 'hai;dian;qu;hdq;'},
+                {areaName: '西城区', areaID: '1012', py: 'xi;cheng;qu;xcq;'},
+                {areaName: '朝阳区', areaID: '1013', py: 'chao;yang;qu;cyq'}
+            ];
+        var recordsD = [
+                {areaName: '徐汇区', areaID: '1021', py: 'xu;hui;qu;xhq;'},
+                {areaName: '闵行区', areaID: '1022', py: 'min;xing;qu;mxq;'},
+                {areaName: '闸北区', areaID: '1023', py: 'zha;bei;qu;zbq;'}
+            ];
+        
+        //最简单使用
+        $('#select1').chosen()
+        .on('change', function() // change 事件就是 <select> 的 change 事件
+        {
+            alert(this.value + ': ' + $(this).find('option:selected').text());
+        });
+        
+        //带占位符
+        $('#select2').chosen();
+        
+        // 分组
+        $('#select3').chosen();
+        
+        //根据数据自动生成 <select> 内容
+        $('#select4').chosen({data: recordsA, valField: 'areaID', txtField: 'areaName'});
+        
+        //根据数据自动生成带分组的 <select> 内容
+        var data5 = [
+            {
+                isOptgroup: true,        // 该项是否用于分组
+                optgroupLabel: '北京',   // 分组名称
+                optgroupID: '1010',      // optgroupID 字段是可选的
+                optItems: recordsA       // optItems 为生成分组内 <option> 对应的数据，数组类型
+            },
+            {
+                isOptgroup: true,
+                optgroupLabel: '上海',
+                optgroupID: '1020',
+                optItems: recordsB
+            }
+        ];
+        
+        $('#select5').chosen({data: data5, valField: 'areaID', txtField: 'areaName'});
+        
+        // 拼音匹配，根据数据自动生成
+        $('#select6').chosen({data: recordsC, valField: 'areaID', txtField: 'areaName'});
+        
+        //拼音匹配，根据数据自动生成，带分组
+        var data7 = [
+            {
+                isOptgroup: true,        // 该项是否用于分组
+                optgroupLabel: '北京',   // 分组名称
+                optgroupID: '1010',      // optgroupID 字段是可选的
+                optItems: recordsC       // optItems 为生成分组内 <option> 对应的数据，数组类型
+            },
+            {
+                isOptgroup: true,
+                optgroupLabel: '上海',
+                optgroupID: '1020',
+                optItems: recordsD
+            }
+        ];
+        
+        $('#select7').chosen({data: data7, valField: 'areaID', txtField: 'areaName'});
+        
+    </script>
+    
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
